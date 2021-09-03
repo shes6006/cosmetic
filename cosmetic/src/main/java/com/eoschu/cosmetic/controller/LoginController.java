@@ -1,4 +1,5 @@
 package com.eoschu.cosmetic.controller;
+
 import java.util.Locale;
 
 import javax.servlet.http.HttpSession;
@@ -19,20 +20,32 @@ public class LoginController {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private MessageSource messageSource;
-	
-	@RequestMapping(value="/loginController", method = RequestMethod.GET)
-	public String method(String userId, String password,
-			Model model, HttpSession session, Locale locale) {
-		
+
+	@RequestMapping(value = "/loginController", method = RequestMethod.GET)
+	public String method(String userId, String password, Model model, HttpSession session, Locale locale) {
 		User userBean = userService.getUserById(userId);
-		System.out.println(userBean);
-		System.out.println(userBean.getPassword());
-		if(userBean!=null && userBean.getPassword().equals(password)) {
+		if (userBean != null && userBean.getPassword().equals(password)) {
 			return "redirect:/index";
 		}
 		return "/login";
+	}
+
+	@RequestMapping(value = "/registration", method = RequestMethod.POST)
+	public String addUser(String userId, String password, String email) {
+		System.out.println(userId+password+email);
+		if (userId.length() !=0 && password.length()!= 0 && email.length()!=0) {
+			User user = new User();
+			user.setUserId(userId);
+			user.setPassword(password);
+			user.setEmailId(email);
+			user.setEnabled(true);
+			System.out.println(user);
+			userService.addUser(user);
+			
+		}
+		return "/index";
 	}
 }
